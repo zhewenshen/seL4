@@ -15,6 +15,7 @@
 #include <sel4/arch/constants.h>
 #include <sel4/sel4_arch/constants.h>
 #include <benchmark/benchmark_utilisation_.h>
+#include <machine/interrupt.h>
 
 enum irq_state {
     IRQInactive  = 0,

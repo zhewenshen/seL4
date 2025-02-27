@@ -206,6 +206,7 @@ void ipi_send_target(irq_t irq, word_t cpuTargetList)
  */
 void setIRQTarget(irq_t irq, seL4_Word target)
 {
+    printf("IRQ NUMBER: %lu\n", IRQT_TO_IRQ(irq));
     uint8_t targetList = 1 << target;
     uint8_t *targets = (void *)(gic_dist->targets);
     word_t hwIRQ = IRQT_TO_IRQ(irq);

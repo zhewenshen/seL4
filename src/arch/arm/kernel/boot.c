@@ -272,7 +272,7 @@ BOOT_CODE static void init_plat(void)
 BOOT_CODE static bool_t try_init_kernel_secondary_core(void)
 {
     /* need to first wait until some kernel init has been done */
-    while (!node_boot_lock);
+    while (!node_boot_lock) {}
 
     /* Perform cpu init */
     init_cpu();
@@ -657,7 +657,7 @@ BOOT_CODE VISIBLE void init_kernel(
 )
 {
     bool_t result;
-
+    // printf("inside init_kernel\n");
 #ifdef ENABLE_SMP_SUPPORT
     /* we assume there exists a cpu with id 0 and will use it for bootstrapping */
     if (getCurrentCPUIndex() == 0) {
@@ -671,7 +671,7 @@ BOOT_CODE VISIBLE void init_kernel(
     } else {
         result = try_init_kernel_secondary_core();
     }
-
+    printf("did we ever get here?\n");
 #else
     result = try_init_kernel(ui_p_reg_start,
                              ui_p_reg_end,
@@ -680,7 +680,7 @@ BOOT_CODE VISIBLE void init_kernel(
                              dtb_addr_p, dtb_size,
                              extra_device_addr_p, extra_device_size
                              );
-
+    printf("whoop whoop maybe we got here\n");
 #endif /* ENABLE_SMP_SUPPORT */
 
     if (!result) {
@@ -694,4 +694,9 @@ BOOT_CODE VISIBLE void init_kernel(
 #endif
     schedule();
     activateThread();
+}
+
+BOOT_CODE VISIBLE void init_secondary_cpu(void)
+{
+    printf("initializing secondary cpu\n");
 }

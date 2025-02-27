@@ -17,6 +17,8 @@
 #include <hardware.h>
 #include <util.h>
 
+volatile int secondary_cpu_reached = 100;
+
 /* (node-local) state accessed only during bootstrapping */
 BOOT_BSS ndks_boot_t ndks_boot;
 

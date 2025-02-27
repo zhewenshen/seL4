@@ -75,7 +75,27 @@
 #define SCTLR   sctlr_el1
 #endif
 
+.equ UART_BASE,        0x09000000
+.equ UARTDR,           0x0
+.equ UARTFR,           0x18
+.equ UARTFR_TXFF,      (1 << 5)
+
 .section .boot.text, "ax"
+
+/* Minimal polled UART putc */
+BEGIN_FUNC(uart_putc)
+    /* x0 = UART base, x1 = character (lower 8 bits) */
+1:
+    ldr     w2, [x0, #UARTFR]
+    tst     w2, #UARTFR_TXFF
+    bne     1b
+    str     w1, [x0, #UARTDR]
+    ret
+END_FUNC(uart_putc)
+
+
+.extern secondary_cpu_reached
+
 BEGIN_FUNC(_start)
     /* Save x4, x5, x6, x7 so we don't clobber it */
     mov     x14, x4
@@ -140,6 +160,14 @@ BEGIN_FUNC(_start)
      */
     bl      init_kernel
 
+
+    ldr     x0, =secondary_cpu_reached
+    ldr     w1, [x0]         /* Load current value */
+    add     w1, w1, #1       /* Increment it */
+    str     w1, [x0]         /* Store back */
+
+    bl      init_secondary_cpu
+
     /* Restore the initial thread. Note that the function restore_user_context()
      * could technically also be called at the end of init_kernel() directly,
      * there is no need to return to the assembly code here at all. However, for
@@ -151,3 +179,27 @@ BEGIN_FUNC(_start)
     b restore_user_context
 
 END_FUNC(_start)
+
+BEGIN_FUNC(_secondary_start)
+    /* Disable interrupts first */
+    msr daifset, #DAIFSET_MASK
+    
+    /* Do SCTLR setup like _start does */
+    msr     spsel, #1
+    mrs     x4, SCTLR
+    ldr     x19, =CR_BITS_SET
+    ldr     x20, =CR_BITS_CLEAR
+    orr     x4, x4, x19
+    bic     x4, x4, x20
+    msr     SCTLR, x4
+
+    /* Stack setup if needed */
+    
+    ldr     x0, =secondary_cpu_reached
+    ldr     w1, [x0]         /* Load current value */
+    add     w1, w1, #1       /* Increment it */
+    str     w1, [x0]         /* Store back */
+    
+    bl      init_secondary_cpu
+    b       restore_user_context  /* Instead of b . */
+END_FUNC(_secondary_start)

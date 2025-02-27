@@ -13,6 +13,7 @@
 static exception_t invokeSchedControl_ConfigureFlags(sched_context_t *target, word_t core, ticks_t budget,
                                                      ticks_t period, word_t max_refills, word_t badge, word_t flags)
 {
+    printf("core: %lu\n", core);
     /* don't modify parameters of tcb while it is in a sorted queue */
     if (target->scTcb) {
         /* possibly stall a remote core */

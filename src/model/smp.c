@@ -28,6 +28,8 @@ void migrateTCB(tcb_t *tcb, word_t new_core)
 #ifdef CONFIG_DEBUG_BUILD
     tcbDebugAppend(tcb);
 #endif
+
+    // can we somehow get a list of irq's associated with a tcb?
 }
 
 #endif /* ENABLE_SMP_SUPPORT */

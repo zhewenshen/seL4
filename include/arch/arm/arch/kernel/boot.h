@@ -23,3 +23,5 @@ void init_kernel(
     uint64_t extra_device_size
 );
 
+
+void init_secondary_cpu(void);
