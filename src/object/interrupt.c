@@ -124,6 +124,11 @@ exception_t decodeIRQHandlerInvocation(word_t invLabel, irq_t irq)
         invokeIRQHandler_ClearIRQHandler(irq);
         return EXCEPTION_NONE;
 
+    case IRQSetIRQCore:
+        setThreadState(NODE_STATE(ksCurThread), ThreadState_Restart);
+        invokeIRQHandler_SetIRQCore(irq, getSyscallArg(0, NULL));
+        return EXCEPTION_NONE;
+
     default:
         userError("IRQHandler: Illegal operation.");
         current_syscall_error.type = seL4_IllegalOperation;
@@ -184,6 +189,11 @@ void deletingIRQHandler(irq_t irq)
 void deletedIRQHandler(irq_t irq)
 {
     setIRQState(IRQInactive, irq);
+}
+
+void invokeIRQHandler_SetIRQCore(irq_t irq, word_t core)
+{
+    setIRQTarget(irq, core);
 }
 
 void handleInterrupt(irq_t irq)
