@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.16.0)
 
 set(CMAKE_SYSTEM_NAME Generic)
 # For a generic system this is unused, so define it to something that will be
@@ -74,7 +74,9 @@ if("${CROSS_COMPILER_PREFIX}" STREQUAL "")
                 CROSS_COMPILER_PREFIX
                 "riscv64-unknown-linux-gnu-"
                 "riscv64-unknown-elf-"
+                "riscv64-none-elf-"
                 "riscv64-elf-"
+                "riscv64-linux-gnu-"
             )
         endif()
     else()
@@ -106,6 +108,7 @@ if("${CROSS_COMPILER_PREFIX}" STREQUAL "")
                 "riscv64-unknown-elf-"
                 "riscv64-none-elf-"
                 "riscv64-elf-"
+                "riscv64-linux-gnu-"
             )
         endif()
     endif()
